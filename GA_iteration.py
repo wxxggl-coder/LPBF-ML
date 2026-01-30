@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 OUTPUT_DIR = "GA_results"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-# 1. 数据读取与预处理
+
 data = pd.read_csv('11.csv')
 x = data.iloc[:, :4].values
 y = data.iloc[:, 4].values
@@ -33,7 +33,7 @@ model = LGBMRegressor(
 )
 model.fit(x_train_scaled, y_train)
 
-# 2. 定义目标函数
+
 def make_objective(model, scaler):
     def objective(params):
         X = params.reshape(1, -1)
@@ -43,7 +43,7 @@ def make_objective(model, scaler):
     return objective
 
 
-# 3. 多次 GA 运行
+
 num_runs = 100
 results = []
 
@@ -66,11 +66,11 @@ for i in range(num_runs):
     print(f"Run {i+1}: Best_Y={-best_y}, Params={best_x}")
 
 
-# 4. 保存结果
+
 columns = ['Ti', 'B', 'Power', 'Speed', 'Best_Y']
 df = pd.DataFrame(results, columns=columns)
 
-# 计算统计指标
+
 stats_df = df.describe().T[['mean', 'std', 'min', 'max']]
 stats_df.index.name = 'Parameter'
 
@@ -88,7 +88,7 @@ def journal_style(ax):
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
 
-# 6. 绘图
+
 
 plt.rcParams['font.family'] = 'Arial'
 plt.rcParams['axes.linewidth'] = 1.2
@@ -144,7 +144,7 @@ plt.tight_layout()
 plt.savefig(os.path.join(OUTPUT_DIR, "GA_params_2x2_bar.png"), dpi=600, bbox_inches='tight')
 plt.close()
 
-# ---- (5) Best_Y 直方图 + 透明误差带 ----
+
 best_y_mean = df['Best_Y'].mean()
 best_y_std = df['Best_Y'].std()
 plt.figure(figsize=(6,5), dpi=300)

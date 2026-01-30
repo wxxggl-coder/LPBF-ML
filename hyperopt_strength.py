@@ -7,10 +7,10 @@ import pandas as pd
 
 start_time = time.time()
 
-# 读取数据
+
 data = pd.read_csv('11.csv')
 
-# 提取特征和目标值
+
 x = data.iloc[:, :4].values
 y = data.iloc[:, 4].values
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
@@ -27,7 +27,7 @@ def hyperopt_objective(params):
     reg_lambda = params['reg_lambda']
     boosting_type = params['boosting_type']
 
-    # 创建 LightGBM 分类器实例
+
     estimator = LGBMRegressor(learning_rate=learning_rate,
                                max_depth=max_depth,
                                max_features=max_features,
@@ -38,7 +38,7 @@ def hyperopt_objective(params):
                                boosting_type=boosting_type,
                                random_state=42)
 
-    # 定义交叉验证过程
+
     cv = KFold(n_splits=5, shuffle=True, random_state=42)
     validation_loss = cross_validate(estimator, x_train, y_train, scoring='neg_root_mean_squared_error',
                                      cv=cv, verbose=False,
@@ -47,7 +47,7 @@ def hyperopt_objective(params):
     opt_score.append(np.mean(-validation_loss['test_score']))
     return np.mean(-validation_loss['test_score'])
 
-# 定义超参数空间
+
 space = {
     'learning_rate': hp.uniform('learning_rate', 0.01, 2),
     'max_depth': hp.quniform('max_depth', 10, 100, 1),
@@ -60,7 +60,7 @@ space = {
 
         }
 
-# 配置优化器
+
 trials = Trials()
 rstate = np.random.default_rng(42)
 best = fmin(fn=hyperopt_objective,
@@ -70,7 +70,7 @@ best = fmin(fn=hyperopt_objective,
             trials=trials,
             rstate=rstate)
 
-# 打印最佳超参数和对应的交叉验证得分
+
 print("Best hyperparameters:")
 best_trial = trials.best_trial
 for key, value in best_trial['misc']['vals'].items():
